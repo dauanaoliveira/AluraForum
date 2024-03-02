@@ -3,6 +3,7 @@ package br.com.alura.forum.controller
 import br.com.alura.forum.dto.TopicForm
 import br.com.alura.forum.dto.TopicView
 import br.com.alura.forum.service.TopicService
+import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -21,5 +22,5 @@ class TopicController(private val service: TopicService) {
     fun getById(@PathVariable id: Long): TopicView = service.getById(id)
     
     @PostMapping
-    fun create(@RequestBody topicForm: TopicForm) = service.create(topicForm)
+    fun create(@RequestBody @Valid topicForm: TopicForm) = service.create(topicForm)
 }
