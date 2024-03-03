@@ -2,6 +2,7 @@ package br.com.alura.forum.service
 
 import br.com.alura.forum.dto.TopicForm
 import br.com.alura.forum.dto.TopicView
+import br.com.alura.forum.dto.UpdateTopicForm
 import br.com.alura.forum.mapper.TopicFormMapper
 import br.com.alura.forum.mapper.TopicViewMapper
 import br.com.alura.forum.model.Topic
@@ -29,11 +30,19 @@ class TopicService(
     }
     
     fun updateStatus(id: Long, status: TopicStatus): Topic =
-        topics.find { it.id == id }?.let { topic ->
-            val index = topics.indexOfFirst { it.id == id }
-            val mutableTopic = topics.toMutableList()
-            mutableTopic[index] = topic.copy(status = status)
-            topics = mutableTopic.toList()
-            return topics[index]
-        } ?: throw Exception("topic not found")
+        getTopicById(id).let { topic ->
+            val topicToUpdate = topic.copy(status = status)
+            topics = topics.minus(topic).plus(topicToUpdate)
+            topicToUpdate
+        }
+    
+    fun update(topicForm: UpdateTopicForm): TopicView =
+        getTopicById(topicForm.id).let { topic ->
+            val topicToUpdate = topic.copy(
+                title = topicForm.title,
+                message = topicForm.message
+            )
+            topics = topics.minus(topic).plus(topicToUpdate)
+            topicViewMapper.map(topicToUpdate)
+        }
 }
